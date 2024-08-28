@@ -6,9 +6,7 @@ import router from "./router/index.js";
 import databaseConnection from "./database/database.js";
 import errerMiddleware from "./errorHandler/errorMiddleware.js";
 
-dotenv.config({
-  path: ".env",
-});
+dotenv.config();
 const app = express();
 
 // middlewere

@@ -1,7 +1,10 @@
 import ErrorHandler from "../errorHandler/errorHandler.js";
 import jwt from "jsonwebtoken";
+import bcrypt from "bcryptjs";
 import User from "../model/userModel.js";
 import registerToken from "../helper/registerToken.js";
+import createToken from "../helper/logInJwtToken.js";
+import { json } from "express";
 
 class UserController {
   static async userRegistration(req, res, next) {
@@ -70,6 +73,61 @@ class UserController {
       });
     } catch (err) {
       new ErrorHandler(err.message, 404);
+    }
+  }
+
+  static async userLogIn(req, res, next) {
+    try {
+      const { email, password } = req.body;
+
+      // check if all the required field are provided or not
+      if (!email || !password) {
+        return next(
+          new ErrorHandler("email and password both are required", 404)
+        );
+      }
+
+      // check if the eamil is exist or not
+      const isExistUser = await User.findOne({ email });
+      if (!isExistUser) {
+        next(new ErrorHandler("user is not found", 404));
+      }
+
+      // check if the password is match or not
+      const isMatchPass = bcrypt.compare(password, isExistUser.password);
+      if (!isMatchPass) {
+        next(new ErrorHandler("password is not match", 404));
+      }
+
+      // create access token and refresh token
+      const { accessToken, refreshToken } = createToken(isExistUser);
+      const accessTokenExpires = parseInt(process.env.ACCESS_TOKEN_EXPIRES);
+      const refreshTokenExpires = parseInt(process.env.REFRESH_TOKEN_EXPIRES);
+
+      // option for cookies
+      const accessTokenOption = {
+        expires: new Date(Date.now() + accessTokenExpires * 1000),
+        httpOnly: true,
+      };
+      const refreshTokenOption = {
+        expires: new Date(Date.now() + refreshTokenExpires * 1000),
+        httpOnly: true,
+      };
+
+      // send the cookie response
+      res.cookie("access_token", accessToken, accessTokenOption);
+      res.cookie("refresh_token", refreshToken, refreshTokenOption);
+
+      // return the respone
+      return res.status(201).json({
+        success: true,
+        message: "user is logged in",
+        user: isExistUser,
+        accessToken,
+        refreshToken,
+      });
+    } catch (error) {
+      next(new ErrorHandler(error.message, 404));
     }
   }
 }
