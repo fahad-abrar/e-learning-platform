@@ -93,7 +93,7 @@ class UserController {
       }
 
       // check if the password is match or not
-      const isMatchPass = await bcrypt.compare(password, isExistUser.password);
+      const isMatchPass = bcrypt.compareSync(password, isExistUser.password);
       if (!isMatchPass) {
         return next(new ErrorHandler("password is not match", 404));
       }
@@ -197,7 +197,7 @@ class UserController {
         user,
       });
     } catch (error) {
-      next(new ErrorHandler(error.message, 404));
+      return next(new ErrorHandler(error.message, 404));
     }
   }
 
@@ -249,6 +249,105 @@ class UserController {
       });
     } catch (error) {
       next(new ErrorHandler(error.message, 404));
+    }
+  }
+
+  static async updateUserInfo(req, res, next) {
+    try {
+      // retrieved the user info
+      const { name, email, phone } = req.body;
+
+      // check if the user is exist or not
+      const user = await User.findById(req.user.id);
+      if (!user) {
+        return next(new ErrorHandler("user is not found", 404));
+      }
+      if (user && email) {
+        // check if the email is exist or not
+        const isExistEmail = await User.findOne({ email });
+        if (isExistEmail) {
+          return next(new ErrorHandler("email is already exist", 404));
+        }
+        user.email = email;
+      }
+      (user.name = name), (user.phone = phone);
+
+      // save the user info
+      await user.save();
+
+      // sens the response
+      return res.status(201).json({
+        success: true,
+        message: "userinfo is updated",
+        user,
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 404));
+    }
+  }
+
+  static async socialAuth(req, res, next) {
+    try {
+      // retrieved the user info
+      const { name, email, phone, avatar } = req.body;
+
+      // check if the email is exist or not
+      const isExistEmail = await User.findOne({ email });
+      if (isExistEmail) {
+        return next(new ErrorHandler("email is already exist", 404));
+      }
+
+      // save user info
+      const user = await User.create({
+        name,
+        email,
+        phone,
+        avatar,
+      });
+
+      // sens the response
+      return res.status(201).json({
+        success: true,
+        message: "userinfo is updated",
+        user,
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 404));
+    }
+  }
+
+  static async updatePassword(req, res, next) {
+    try {
+      // retrieved all the required info
+      const { password, newPassword, confirmPassword } = req.body;
+      const user = await User.findById(req.user.id);
+
+      // check all the required fields are provided or not
+      if (!password || !newPassword || !confirmPassword) {
+        return next(new ErrorHandler("all fields are required"));
+      }
+
+      // check if the password is match or not
+      const isMatch = bcrypt.compare(password, user.password);
+      if (!isMatch) {
+        return next(new ErrorHandler("password is not correct", 404));
+      }
+
+      // chek if the new and confirm password is match or not
+      if (newPassword !== confirmPassword) {
+        return next(new ErrorHandler("password is not match", 404));
+      }
+
+      // save the new password
+      user.password = newPassword;
+      await user.save();
+      return res.status(201).json({
+        success: true,
+        message: "userinfo is updated",
+        user,
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 404));
     }
   }
 }

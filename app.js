@@ -43,4 +43,4 @@ app.listen(process.env.PORT, () => {
 });
 
 // handle the error
-//app.use(errerMiddleware);
+app.use(errerMiddleware);

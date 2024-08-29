@@ -17,4 +17,16 @@ userRoute.get(
   catchAsync(UserController.updatetokens)
 );
 
+userRoute.put(
+  "/update",
+  isAuthenticate,
+  catchAsync(UserController.updateUserInfo)
+);
+userRoute.post("/social-auth", catchAsync(UserController.socialAuth));
+userRoute.post(
+  "/change-password",
+  isAuthenticate,
+  catchAsync(UserController.updatePassword)
+);
+
 export default userRoute;
