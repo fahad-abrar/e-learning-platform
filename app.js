@@ -35,8 +35,7 @@ databaseConnection();
 app.use(errerMiddleware);
 app.all("*", (req, res, next) => {
   const err = new Error(`Route ${req.originalUrl} is not found`);
-  err.statusCode = 404;
-  next();
+  return err;
 });
 
 app.listen(process.env.PORT, () => {
@@ -44,4 +43,4 @@ app.listen(process.env.PORT, () => {
 });
 
 // handle the error
-app.use(errerMiddleware);
+//app.use(errerMiddleware);

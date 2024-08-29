@@ -4,7 +4,6 @@ import bcrypt from "bcryptjs";
 import User from "../model/userModel.js";
 import registerToken from "../helper/registerToken.js";
 import createToken from "../helper/logInJwtToken.js";
-import { json } from "express";
 
 class UserController {
   static async userRegistration(req, res, next) {
@@ -90,13 +89,13 @@ class UserController {
       // check if the eamil is exist or not
       const isExistUser = await User.findOne({ email });
       if (!isExistUser) {
-        next(new ErrorHandler("user is not found", 404));
+        return next(new ErrorHandler("user is not found", 404));
       }
 
       // check if the password is match or not
-      const isMatchPass = bcrypt.compare(password, isExistUser.password);
+      const isMatchPass = await bcrypt.compare(password, isExistUser.password);
       if (!isMatchPass) {
-        next(new ErrorHandler("password is not match", 404));
+        return next(new ErrorHandler("password is not match", 404));
       }
 
       // create access token and refresh token
@@ -106,23 +105,145 @@ class UserController {
 
       // option for cookies
       const accessTokenOption = {
-        expires: new Date(Date.now() + accessTokenExpires * 1000),
+        expires: new Date(Date.now() + accessTokenExpires * 1000 * 100000),
         httpOnly: true,
       };
       const refreshTokenOption = {
-        expires: new Date(Date.now() + refreshTokenExpires * 1000),
+        expires: new Date(Date.now() + refreshTokenExpires * 1000 * 100000),
         httpOnly: true,
       };
 
       // send the cookie response
-      res.cookie("access_token", accessToken, accessTokenOption);
-      res.cookie("refresh_token", refreshToken, refreshTokenOption);
+      res.cookie("accessToken", accessToken, accessTokenOption);
+      res.cookie("refreshToken", refreshToken, refreshTokenOption);
 
       // return the respone
       return res.status(201).json({
         success: true,
         message: "user is logged in",
         user: isExistUser,
+        accessToken,
+        refreshToken,
+      });
+    } catch (error) {
+      next(new ErrorHandler(error.message, 404));
+    }
+  }
+
+  static async userLogout(req, res, next) {
+    try {
+      // access the id from the auth user
+      const { id } = req.user;
+
+      // find the auth user
+      const user = await User.findById(id);
+      if (!user) {
+        return next(new ErrorHandler("invalid credential", 404));
+      }
+
+      // set the cookie option
+      const option = {
+        expires: new Date(Date.now() + 10),
+        httpOnly: true,
+      };
+
+      // clear the cookie and send the response
+      res.cookie("accessToken", null, option);
+      res.cookie("refreshToken", null, option);
+
+      // return the response
+      return res.status(200).json({
+        success: true,
+        message: " user is logout",
+        user,
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 404));
+    }
+  }
+
+  static async getUser(req, res, next) {
+    try {
+      const user = await User.find();
+      if (!user) {
+        next(new ErrorHandler("user is not found", 404));
+      }
+
+      return res.status(200).json({
+        success: true,
+        message: " user is retrieved",
+        user,
+      });
+    } catch (error) {
+      next(new ErrorHandler(error.message, 404));
+    }
+  }
+
+  static async getUserById(req, res, next) {
+    try {
+      // retrieved the user id
+      const { id } = req.user;
+      const user = await User.findById(id);
+
+      // check if the user is exis t or not
+      if (!user) {
+        next(new ErrorHandler("user is not found", 404));
+      }
+
+      // send the response
+      return res.status(200).json({
+        success: true,
+        message: " user is retrieved",
+        user,
+      });
+    } catch (error) {
+      next(new ErrorHandler(error.message, 404));
+    }
+  }
+
+  static async updatetokens(req, res, next) {
+    try {
+      // retrieved the refresh token
+      const token = req.cookies.refreshToken;
+
+      // verify the token and retrived user from this
+      const decode = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
+      if (!decode) {
+        next(new ErrorHandler("user is not found", 404));
+      }
+
+      // option for cookies
+      const accessTokenOption = {
+        expires: new Date(Date.now() + 3 * 24 * 60 * 60),
+        httpOnly: true,
+      };
+      const refreshTokenOption = {
+        expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+        httpOnly: true,
+      };
+      const payload = {
+        id: decode.id,
+        name: decode.name,
+        email: decode.email,
+      };
+
+      // new access and refresh token
+      const refreshToken = jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET, {
+        expiresIn: "3d",
+      });
+
+      const accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {
+        expiresIn: "3d",
+      });
+
+      // send the new cookies
+      res.cookie("accessToken", accessToken, accessTokenOption);
+      res.cookie("refreshToken", refreshToken, refreshTokenOption);
+
+      // send the response
+      return res.status(200).json({
+        success: true,
+        message: "token is updated",
         accessToken,
         refreshToken,
       });
