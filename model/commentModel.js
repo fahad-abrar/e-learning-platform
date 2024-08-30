@@ -1,12 +1,12 @@
 import mongoose from "mongoose";
 
-const questionSchema = new mongoose.Schema(
+const commentSchema = new mongoose.Schema(
   {
     userId: {
       type: String,
       required: false,
     },
-    courseId: {
+    topicId: {
       type: String,
       required: false,
     },
@@ -29,5 +29,5 @@ const questionSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
-const Question = mongoose.model("Question", questionSchema);
-export default Question;
+const Comment = mongoose.model("Comment", commentSchema);
+export default Comment;
