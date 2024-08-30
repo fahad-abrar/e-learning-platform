@@ -83,25 +83,36 @@ class TopicController {
 
   static async deleteTopic(req, res, next) {
     try {
-      const { id } = req.params;
+      const { cid, tid } = req.params;
 
       // check if the topic is exist or not
-      const topic = await Topic.findById(id);
+      const topic = await Topic.findById(tid);
       if (!topic) {
         return next(new ErrorHandler("topic is not found", 404));
       }
+      console.log("topic==>>", topic);
       // find the course
-      const course = await Course.find();
-      console.log("course data ==>>", course.courseData);
+      const course = await Course.findById(cid);
+      console.log("course data ==>>", course.courseData.toString());
 
       // delete the topic
-      const deletedOne = await Topic.deleteOne({ id });
+      const deletedOne = await Topic.findByIdAndDelete(tid);
+
+      // remove the deleted topic from the course data
+      course.courseData = course?.courseData.filter((id) => {
+        return id.toString() !== tid;
+      });
+
+      //save the course data
+      await course.save();
+
+      console.log("id==>>", course.courseData);
 
       // send the response
       return res.status(201).json({
         success: true,
-        message: " topic is updated",
-        deletedtopic,
+        message: " topic is deleted",
+        deletedOne,
       });
     } catch (error) {
       return next(new ErrorHandler(error.message, 500));
@@ -120,7 +131,7 @@ class TopicController {
       // send the response
       return res.status(201).json({
         success: true,
-        message: " topic is updated",
+        message: "topis is retrieved",
         topic,
       });
     } catch (error) {
@@ -139,7 +150,7 @@ class TopicController {
       // send the response
       return res.status(201).json({
         success: true,
-        message: " topic is updated",
+        message: "topics are retrieved",
         topics,
       });
     } catch (error) {

@@ -6,7 +6,7 @@ const topicRoute = express.Router();
 
 topicRoute.post("/create/:id", catchAsync(TopicController.createTopic));
 topicRoute.put("/update/:id", catchAsync(TopicController.updateTopic));
-topicRoute.delete("/delete/:id", catchAsync(TopicController.deleteTopic));
+topicRoute.delete("/delete/:cid/:tid", catchAsync(TopicController.deleteTopic));
 topicRoute.get("/single/:id", catchAsync(TopicController.getSingleTopic));
 topicRoute.get("/all", catchAsync(TopicController.getAllTopic));
 
