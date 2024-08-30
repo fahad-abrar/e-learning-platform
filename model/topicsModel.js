@@ -1,35 +1,51 @@
 import mongoose from "mongoose";
 
-const topicSchema = new mongoose.Schema({
-  title: {
-    type: String,
-    required: false,
-  },
-  thumbnil: {
-    public_id: {
+const topicSchema = new mongoose.Schema(
+  {
+    title: {
       type: String,
       required: false,
     },
-    URL: {
+    description: {
       type: String,
       required: false,
     },
+    thumbnil: {
+      public_id: {
+        type: String,
+        required: false,
+      },
+      URL: {
+        type: String,
+        required: false,
+      },
+    },
+    topicLink: {
+      public_id: {
+        type: String,
+        required: false,
+      },
+      URL: {
+        type: String,
+        required: false,
+      },
+    },
+    userId: {
+      type: String,
+      required: false,
+    },
+    courseId: {
+      type: String,
+      required: false,
+    },
+    avgRating: {
+      type: Number,
+      default: 0,
+    },
+    review: [],
+    comment: [],
   },
-  userId: {
-    type: String,
-    required: false,
-  },
-  courseId: {
-    type: String,
-    required: false,
-  },
-  avgRating: {
-    type: Number,
-    default: 0,
-  },
-  review: [],
-  questionId: [],
-  answer: [],
-});
+  { timestamps: true }
+);
 const Topic = mongoose.model("Topic", topicSchema);
 export default Topic;
