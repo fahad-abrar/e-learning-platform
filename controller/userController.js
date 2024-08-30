@@ -1,6 +1,7 @@
 import ErrorHandler from "../errorHandler/errorHandler.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
+import cloudinary from "cloudinary";
 import User from "../model/userModel.js";
 import registerToken from "../helper/registerToken.js";
 import createToken from "../helper/logInJwtToken.js";
@@ -348,6 +349,45 @@ class UserController {
       });
     } catch (error) {
       return next(new ErrorHandler(error.message, 404));
+    }
+  }
+
+  static async uploadAvatar(req, res, next) {
+    try {
+      // retrieved the avatar
+      const { avatar } = req.body;
+
+      // Check if the user is exist
+      const user = await User.findById(req.user.id);
+      if (!user) {
+        return next(new ErrorHandler("User not found", 404));
+      }
+
+      // upload the new avatar
+      const myAvatar = await cloudinary.v2.uploader.upload(avatar, {
+        folder: "avatar",
+      });
+
+      // if the user already has an avatar, delete the old one
+      if (user?.avatar?.public_id) {
+        await cloudinary.v2.uploader.destroy(user.avatar.public_id);
+      }
+
+      // set the public id and url
+      user.avatar = {
+        public_id: myAvatar.public_id,
+        url: myAvatar.secure_url,
+      };
+
+      // save avatar into the user data
+      await user.save();
+      return res.status(201).json({
+        success: true,
+        message: "avatar is uploaaded",
+        user,
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 400));
     }
   }
 }

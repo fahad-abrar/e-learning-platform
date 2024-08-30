@@ -24,6 +24,7 @@ app.use(
   })
 );
 app.use(cookieParser());
+app.use(express.static("public"));
 
 // router
 app.use("/api", router);
