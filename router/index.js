@@ -6,6 +6,7 @@ import topicRoute from "./topicRouter.js";
 import commentRoute from "./commentRoute.js";
 import replyRoute from "./replyRoute.js";
 import reviewRoute from "./reviewRoute.js";
+import topicFileRoute from "./topicFileRoute.js";
 
 const router = express.Router();
 
@@ -17,5 +18,6 @@ router.use("/topic", topicRoute);
 router.use("/comment", commentRoute);
 router.use("/reply", replyRoute);
 router.use("/review", reviewRoute);
+router.use("/vedio", topicFileRoute);
 
 export default router;

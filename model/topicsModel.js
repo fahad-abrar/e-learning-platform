@@ -20,12 +20,12 @@ const topicSchema = new mongoose.Schema(
         required: false,
       },
     },
-    topicLink: {
+    vedio: {
       public_id: {
         type: String,
         required: false,
       },
-      URL: {
+      url: {
         type: String,
         required: false,
       },

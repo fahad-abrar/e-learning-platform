@@ -9,7 +9,9 @@ const fileUpload = () => {
       cb(null, uploadPath);
     },
     filename: function (req, file, cb) {
-      const fileExt = path.extname(file.originalname);
+      const fileExt = path.extname(file.originalname).toLowerCase();
+      //const fileExt = path.extname(file.originalname).toLowerCase();
+      console.log("this is from multer --- >>>", fileExt);
 
       const fileName =
         file.originalname
@@ -30,7 +32,7 @@ const fileUpload = () => {
       fileSize: 10 * 1024 * 1024,
     },
     fileFilter: (req, file, cb) => {
-      const fileExt = path.fileExt(file.originalname).toLowerCase();
+      const fileExt = path.extname(file.originalname).toLowerCase();
       const allowExt = [
         ".png",
         ".jpg",
