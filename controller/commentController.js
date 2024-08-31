@@ -6,8 +6,8 @@ class CommentController {
   static async createComment(req, res, next) {
     try {
       // retrieved info from the req body
-      const { question } = req.body;
-      if (!question) {
+      const { comment } = req.body;
+      if (!comment) {
         return next(new ErrorHandler("all the field is required", 404));
       }
 
@@ -22,21 +22,21 @@ class CommentController {
       const commentSkeleton = {
         userId: req.user.id,
         topicId: id,
-        question,
+        comment,
       };
 
       // store the info in the comment file
-      const comment = await Comment.create(commentSkeleton);
+      const newComment = await Comment.create(commentSkeleton);
 
       //push the comment to topic file
-      topic.comment.push(comment);
+      topic.comment.push(newComment);
       await topic.save();
 
       // send the response
       return res.status(201).json({
         success: true,
         message: "comment is created",
-        comment,
+        comment: newComment,
       });
     } catch (error) {
       return next(new ErrorHandler(error.message, 500));

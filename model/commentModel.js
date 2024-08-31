@@ -10,17 +10,17 @@ const commentSchema = new mongoose.Schema(
       type: String,
       required: false,
     },
-    question: {
+    comment: {
       type: String,
       required: false,
     },
-    answer: [
+    replies: [
       {
         userId: {
           type: String,
           required: false,
         },
-        ans: {
+        reply: {
           type: String,
           required: false,
         },

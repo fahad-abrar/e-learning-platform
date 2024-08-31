@@ -1,25 +1,22 @@
 import mongoose from "mongoose";
 
-const answerSchema = new mongoose.Schema(
+const replySchema = new mongoose.Schema(
   {
     userId: {
       type: String,
       required: false,
     },
-    courseId: {
+    commentId: {
       type: String,
       required: false,
     },
-    questionId: {
-      type: String,
-      required: false,
-    },
-    answer: {
+    reply: {
       type: String,
       required: false,
     },
   },
   { timestamps: true }
 );
-const Answer = mongoose.model("Answer", answerSchema);
-export default Answer;
+const Reply = mongoose.model("Reply", replySchema);
+
+export default Reply;

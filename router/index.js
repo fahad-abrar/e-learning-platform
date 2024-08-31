@@ -4,6 +4,8 @@ import courseRoute from "./courseRoute.js";
 import orderRoute from "./orderRoute.js";
 import topicRoute from "./topicRouter.js";
 import commentRoute from "./commentRoute.js";
+import replyRoute from "./replyRoute.js";
+
 const router = express.Router();
 
 // user route --
@@ -12,5 +14,6 @@ router.use("/course", courseRoute);
 router.use("/order", orderRoute);
 router.use("/topic", topicRoute);
 router.use("/comment", commentRoute);
+router.use("/reply", replyRoute);
 
 export default router;
