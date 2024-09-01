@@ -5,6 +5,7 @@ import cloudinary from "cloudinary";
 import User from "../model/userModel.js";
 import registerToken from "../helper/registerToken.js";
 import createToken from "../helper/logInJwtToken.js";
+import sendMail from "../helper/sendMailer.js";
 
 class UserController {
   static async userRegistration(req, res, next) {
@@ -32,6 +33,17 @@ class UserController {
 
       const token = registerToken(user);
       const code = token.secretCode;
+
+      // set up the mail object to send the mail
+      const mailObs = {
+        to: email,
+        subject: "",
+        text: "",
+        html: "",
+      };
+
+      // send the mail to the user
+      //sendMail(mailObs)
 
       return res.status(200).json({
         success: true,
