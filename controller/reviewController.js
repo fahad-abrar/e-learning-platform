@@ -33,6 +33,8 @@ class ReviewController {
 
       // store the info in the course file
       const newreview = await Review.create(reviewSkeleton);
+      newreview.courseId = id;
+      await newreview.save();
 
       //push the review to cource file
       course.reviews.push(newreview);
@@ -41,10 +43,6 @@ class ReviewController {
       const totalRating = course.reviews.reduce((acc, itm) => {
         return (acc += parseInt(itm.rating));
       }, 0);
-
-      console.log(totalRating);
-      console.log("***************");
-      console.log(course.reviews.length);
 
       course.ratings = totalRating / course.reviews.length;
       await course.save();

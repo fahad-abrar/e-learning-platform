@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const courseSchema = new mongoose.Schema(
   {
-    name: {
+    title: {
       type: String,
       required: true,
     },
@@ -22,11 +22,11 @@ const courseSchema = new mongoose.Schema(
     thumbnail: {
       public_id: {
         type: String,
-        required: true,
+        required: false,
       },
       url: {
         type: String,
-        required: true,
+        required: false,
       },
     },
     tags: {
@@ -35,15 +35,15 @@ const courseSchema = new mongoose.Schema(
     },
     level: {
       type: String,
-      required: true,
+      required: false,
     },
     demoUrl: {
       type: String,
-      required: true,
+      required: false,
     },
     benefits: {
       type: String,
-      required: true,
+      required: false,
     },
     prerequisites: {
       type: String,
@@ -57,7 +57,7 @@ const courseSchema = new mongoose.Schema(
     },
     purchased: {
       type: Number,
-      required: true,
+      default: 0,
     },
   },
   { timestamps: true }

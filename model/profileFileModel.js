@@ -5,7 +5,7 @@ const profileFileSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  fileLink: {
+  avatar: {
     public_id: {
       type: String,
       required: true,

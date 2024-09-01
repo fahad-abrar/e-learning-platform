@@ -1,7 +1,9 @@
 import express from "express";
 import UserController from "../controller/userController.js";
+import ProfileController from "../controller/profileFileController.js";
 import catchAsync from "../errorHandler/catchAsync.js";
 import isAuthenticate from "../middleware/authUser.js";
+import fileUpload from "../helper/multerFleUploader.js";
 const userRoute = express.Router();
 
 // user route ---
@@ -27,6 +29,13 @@ userRoute.post(
   "/change-password",
   isAuthenticate,
   catchAsync(UserController.updatePassword)
+);
+
+userRoute.post(
+  "/avatar",
+  isAuthenticate,
+  fileUpload().single("avatar"),
+  catchAsync(ProfileController.uploadAvatar)
 );
 
 export default userRoute;

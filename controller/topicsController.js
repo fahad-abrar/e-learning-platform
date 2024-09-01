@@ -26,12 +26,10 @@ class TopicController {
         );
       }
 
-      // ******************************
-      // add file upload fuctionality
-      // ******************************
-
       //store the topic in the topic database
       const topic = await Topic.create(topicDetails);
+      topic.courseId = id;
+      await topic.save();
 
       //push the topic in the course file
       course.courseData.push(topic._id);

@@ -3,10 +3,7 @@ import TopicFileController from "../controller/topicFileController.js";
 import catchAsync from "../errorHandler/catchAsync.js";
 import isAuthenticate from "../middleware/authUser.js";
 import fileUpload from "../helper/multerFleUploader.js";
-import multer from "multer";
 const topicFileRoute = express.Router();
-
-const upload = multer({ dest: "public/" });
 
 topicFileRoute.post(
   "/upload/:id",
