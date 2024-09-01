@@ -7,6 +7,7 @@ import commentRoute from "./commentRoute.js";
 import replyRoute from "./replyRoute.js";
 import reviewRoute from "./reviewRoute.js";
 import topicFileRoute from "./topicFileRoute.js";
+import genRoute from "./genAiRoute.js";
 
 const router = express.Router();
 
@@ -19,5 +20,6 @@ router.use("/comment", commentRoute);
 router.use("/reply", replyRoute);
 router.use("/review", reviewRoute);
 router.use("/vedio", topicFileRoute);
+router.use("/genai", genRoute);
 
 export default router;
