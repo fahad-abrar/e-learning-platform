@@ -5,6 +5,7 @@ import cors from "cors";
 import router from "./router/index.js";
 import databaseConnection from "./database/database.js";
 import errerMiddleware from "./errorHandler/errorMiddleware.js";
+import consumer from "./rabbitmq/consumer.js";
 
 dotenv.config();
 const app = express();
@@ -31,6 +32,7 @@ app.use("/api", router);
 
 // database
 databaseConnection();
+consumer();
 
 // error handler
 app.use(errerMiddleware);
