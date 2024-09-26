@@ -6,7 +6,7 @@ import ErrorHandler from "../errorhandler/errHandler.js";
 
 const produceContent = async (messageContent) => {
   try {
-    const url = process.env.RABBIT_URL;
+    const url = process.env.URL;
     const connection = await amqp.connect(url);
     const channel = await connection.createChannel();
 
